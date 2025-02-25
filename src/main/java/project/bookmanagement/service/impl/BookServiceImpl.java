@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import project.bookmanagement.dto.BookResponseDto;
 import project.bookmanagement.dto.CreateBookDto;
 import project.bookmanagement.entity.Book;
@@ -14,6 +15,7 @@ import project.bookmanagement.repository.BookRepository;
 import project.bookmanagement.service.BookService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 
@@ -28,9 +30,30 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void addBook(CreateBookDto createBookDto) {
-        Book book = modelMapper.map(createBookDto, Book.class);
-        bookRepository.save(book);
+    @Transactional
+    public BookResponseDto addBook(CreateBookDto createBookDto) {
+        Optional<Book> existingBookOptional = bookRepository.findByTitleIgnoreCase(createBookDto.getTitle());
+        if (existingBookOptional.isPresent()) {
+            Book existingBook = existingBookOptional.get();
+
+            if (existingBook.getAuthor().equalsIgnoreCase(createBookDto.getAuthor()) &&
+                    existingBook.getIsbn().equals(createBookDto.getIsbn()) &&
+                    existingBook.getPublisher().equalsIgnoreCase(createBookDto.getPublisher()) &&
+                    existingBook.getPages() == createBookDto.getPages() &&
+                    existingBook.getGenre().equalsIgnoreCase(createBookDto.getGenre())) {
+
+                existingBook.setQuantity(existingBook.getQuantity() + createBookDto.getQuantity());
+                bookRepository.save(existingBook);
+                return modelMapper.map(existingBook, BookResponseDto.class);
+            } else {
+                throw new IllegalArgumentException("A book with the same title but different in other areas is already available!");
+            }
+        }
+
+        Book newBook = modelMapper.map(createBookDto, Book.class);
+        newBook.setDeleted(false);
+        bookRepository.save(newBook);
+        return modelMapper.map(newBook, BookResponseDto.class);
     }
 
 
@@ -42,11 +65,13 @@ public class BookServiceImpl implements BookService {
 
     }
 
+    @Override
     //burada pagable istifade olunub
     //hem de deleted statusu 0 olan yeni silinmeyen kitablar gosterilir
     public Page<BookResponseDto> getAllBooks(Pageable pageable) {
         Page<Book> booksPage = bookRepository.findAllByDeletedFalse(pageable); // Yalnız deleted = false olanlar
-        List<BookResponseDto> bookDtos = modelMapper.map(booksPage.getContent(), new TypeToken<List<BookResponseDto>>() {}.getType());
+        List<BookResponseDto> bookDtos = modelMapper.map(booksPage.getContent(), new TypeToken<List<BookResponseDto>>() {
+        }.getType());
         return new PageImpl<>(bookDtos, pageable, booksPage.getTotalElements());
     }
 
@@ -61,9 +86,19 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public void deleteBook(Long id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException("Book not found with id: " + id));
+
+        if (book.getQuantity() > 0) {
+            book.setQuantity(book.getQuantity() - 1);
+            bookRepository.save(book);
+        } else {
+            throw new IllegalArgumentException("The book is no longer available as its quantity is 0.");
+        }
+
+
         book.setDeleted(true);
         bookRepository.save(book);
     }

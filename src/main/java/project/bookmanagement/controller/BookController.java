@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import project.bookmanagement.dto.BookResponseDto;
 import project.bookmanagement.dto.CreateBookDto;
-import project.bookmanagement.entity.Book;
 import project.bookmanagement.service.BookService;
 
 @RestController
@@ -30,9 +29,9 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> add(@RequestBody CreateBookDto createBookDto) {
-        bookService.addBook(createBookDto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<BookResponseDto> add(@RequestBody CreateBookDto createBookDto) {
+        BookResponseDto responseDto = bookService.addBook(createBookDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @GetMapping("/{id}")

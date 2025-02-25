@@ -15,6 +15,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -27,6 +28,7 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
     private String title;
     private String author;
     private String isbn;
@@ -41,12 +43,12 @@ public class Book {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDate createdDate;
+    private LocalDateTime createdDate;
 
     @UpdateTimestamp
-    private LocalDate updatedDate;
+    private LocalDateTime updatedDate;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "books")
     private List<Loan> loans;
 
 }

@@ -15,5 +15,6 @@ public class CreateBookDto {
     private int pages;
     private String genre;
     private int quantity;
-    private boolean deleted;
+
+
 }
