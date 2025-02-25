@@ -19,7 +19,7 @@ import project.bookmanagement.dto.CreateBookDto;
 import project.bookmanagement.service.BookService;
 
 @RestController
-@RequestMapping("/api/v1/books")
+@RequestMapping("/v1/books")
 public class BookController {
 
     private final BookService bookService;

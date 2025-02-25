@@ -30,6 +30,7 @@ public class User {
     private String phone;
     private String email;
     private String address;
+    private String role;
 
     @OneToMany(mappedBy = "user")
     private List<Loan> loans;

@@ -15,7 +15,7 @@ import project.bookmanagement.service.LoanService;
 import project.bookmanagement.service.impl.LoanServiceImpl;
 
 @RestController
-@RequestMapping("/api/v1/loans")
+@RequestMapping("/v1/loans")
 public class LoanController {
 
     @Autowired
