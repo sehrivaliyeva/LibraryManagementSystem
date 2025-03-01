@@ -51,7 +51,7 @@ public class BookServiceImpl implements BookService {
         }
 
         Book newBook = modelMapper.map(createBookDto, Book.class);
-        newBook.setDeleted(false);
+        newBook.setDeleted(false);// 0 ve 1 seklimde 0-false 1- true
         bookRepository.save(newBook);
         return modelMapper.map(newBook, BookResponseDto.class);
     }
@@ -91,15 +91,7 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException("Book not found with id: " + id));
 
-        if (book.getQuantity() > 0) {
-            book.setQuantity(book.getQuantity() - 1);
-            bookRepository.save(book);
-        } else {
-            throw new IllegalArgumentException("The book is no longer available as its quantity is 0.");
-        }
-
-
-        book.setDeleted(true);
+        book.setDeleted(true);// 0-->1
         bookRepository.save(book);
     }
 
