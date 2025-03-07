@@ -24,7 +24,7 @@ import java.util.List;
 @Table(name = "loan")
 public class Loan {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private LocalDate loanDate;
