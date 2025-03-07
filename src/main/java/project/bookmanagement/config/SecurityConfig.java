@@ -67,4 +67,7 @@ public class SecurityConfig {
         return authenticationManagerBuilder.build();
     }
 
+    //BookManagement-0.1.1-SNAPSHOT-plain.jar
+    //BookManagement-0.1.1-SNAPSHOT.jar
+
 }

@@ -1,22 +1,23 @@
 spring:
-  application:
-    name: BookManagement
-
   datasource:
-    username: root
-    password: 1234
-    url: jdbc:mysql://localhost:3306/library
-    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:postgresql://db:5432/library  # Docker Compose'də 'db' servisinə bağlanır
+    username: postgres                      # PostgreSQL istifadəçi adı
+    password: 1234                  # PostgreSQL şifrəsi
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10                # Verilənlər bazası əlaqə hovuzunun maksimum ölçüsü
   jpa:
-    database: mysql
-    database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: update                      # Hibernate, verilənlər bazasını yeniləsin
+    show-sql: true                           # SQL sorğularını konsolda göstərmək üçün (yazılım inkişafında faydalıdır)
     properties:
       hibernate:
-        format_sql: true
-  security:
-    user:
-      name: user
-      password: password
+        format_sql: true                     # SQL formatını oxunaqlı et
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true                   # JSON cavabını oxunaqlı etmək üçün
+  server:
+    port: 8080                              # Spring Boot tətbiqi 8080 portunda işləyəcək
+  application:
+    name: BookManagement                    # Tətbiq adı
+
